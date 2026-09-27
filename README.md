@@ -240,7 +240,7 @@ URLs, and the `<loc>` and `<lastmod>` in `sitemap.xml`.
 | Hours | 9 AM to 9 PM daily | the shop's own Instagram bio, confirmed by the shop |
 | Payment | cash, credit card, NFC tap | Cybo directory |
 | Photographs | shopfront and interior | the shop's own Maps listing, used with the owner's approval |
-| Instagram | `@ssmart_shankarpally_official` | the shop's own bio |
+| Instagram | `@ssmartshankarpally_official` | confirmed by the shop; see the note below |
 
 The embed URL in `app.js` is the owner's own and carries the place ID, so it points
 at the verified listing rather than at a coordinate that might drift. The
@@ -274,6 +274,25 @@ Four things started as single-sourced or unverified and are now corroborated:
   shop has confirmed it. Cybo's 8:30 to 9:30 is the outlier and is supported by
   nothing else. Note that the timings are **not** printed anywhere on the
   signboard, so unlike the phone number they cannot be read off the photograph.
+
+## The Instagram handle does not match the Google listing
+
+The site links to **`@ssmartshankarpally_official`**, which the shop confirmed.
+
+Google's place payload for this listing returns **`ssmart_shankarpally_official`**,
+with an extra underscore after "ssmart". Only one of those can be the real
+account, and as far as Instagram is concerned they are different profiles,
+because the underscore is significant.
+
+The shop's word was taken over the directory's, on the basis that they hold the
+account and the listing may simply have mistyped it. It could not be checked
+automatically: Instagram serves an empty JavaScript shell that returns HTTP 200
+for any handle, existing or not, so a 200 here proves nothing either way.
+
+**Worth asking the shop to correct the handle on the Business Profile.** A wrong
+Instagram link there is a dead path from Google straight to the shop, and it is
+the kind of error that quietly costs a profile its engagement. Opening the
+profile on a phone and tapping the link is the fastest confirmation.
 
 ## A detail the photographs gave up
 

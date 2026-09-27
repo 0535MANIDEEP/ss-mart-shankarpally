@@ -14,6 +14,22 @@
     <meta name="theme-color" content="#101015" media="(prefers-color-scheme: dark)" />
 
     <!--
+      Google Search Console, meta tag method. This has to sit in the served HTML
+      of the exact host being verified, so it lives in the page rather than in a
+      setting somewhere.
+
+      The same property is also verified by file, with
+      googleef167132d8470ad5.html at the site root. Both are kept because they
+      cost nothing and either one satisfies Google if the other is ever disturbed
+      by a deploy. The token is only valid for the host it was issued for, so
+      moving to a custom domain means redoing verification there.
+    -->
+    <meta
+      name="google-site-verification"
+      content="X44yGlknKnDmBlBN0zRqGCavFoBPhL8eOUxneZSkPyI"
+    />
+
+    <!--
       Social and search preview.
 
       og:image is a 1200x630 crop of the real shopfront, cut through the

@@ -1,0 +1,1170 @@
+/* =====================================================================
+   SS MART, Shankarpally
+
+   Three files, no framework, no build step. Open index.html and it runs.
+
+   WHAT THE DESIGN IS TRYING TO BE
+
+   A painted shop board. The customer is standing in a street, or their
+   neighbour sent them a link, and what they need off this page is four
+   things: what the shop is called, what time it is open, where it is, and
+   how to ring. So those four are the page. Everything else is kept out of
+   the way.
+
+   WHY IT IS NOT A DARK PAGE WITH A GLOW
+   A shop in Shankarpally is a daytime place. A near-black ground with a
+   radial highlight is the shape of a software landing page, and a customer
+   looking for dal and biscuits does not want to be sold to. Light ground,
+   one hard accent, type that reads from across a road.
+
+   ONE ACCENT, LOCKED
+   Cobalt, used for the primary action, the focus ring and one stock cell.
+   Green and rust appear only on the live open/closed line, because that is
+   a fact changing in time rather than a brand colour.
+
+   ONE METAL, ONE PLACE
+   The hours plaque. A shop sign is a lit physical object and a moving
+   reflection across it says "this is a real sign outside a real shop". The
+   same gradient on a badge or a card stops being a material and starts
+   being a decoration, so it appears exactly once.
+
+   SHAPE RULE
+   Panels are square. Buttons are pills. A painted board has corners and a
+   finger needs a round target, so the two are different on purpose and both
+   are used the same way everywhere.
+
+   ICONS
+   Tabler Icons, outline, MIT licensed, inlined so the page stays
+   dependency free. The paths are the library's, not drawn by hand.
+   ===================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  --paper: #f1f0eb;
+  --paper-2: #e8e6de;
+  --paper-3: #dedbd1;
+
+  --ink: #14141a;
+  --ink-2: #55555e;
+  --ink-3: #66666f;
+
+  --rule: #d2cfc5;
+  --rule-2: #b9b5a8;
+
+  --accent: #1a3fd8;
+  --accent-ink: #ffffff;
+
+  /* The one second colour on the page, and it is not a brand choice. Amber is
+     what a star rating is in every interface anyone has ever used, and a
+     rating drawn in the brand blue reads as a button. It appears only in the
+     rating block and nowhere else. */
+  --star: #d99413;
+
+  --open: #0b6b3f;
+  --shut: #a8380f;
+
+  /* ---------------------------------------------------------------------
+     THE PLAQUE'S ALLOY, and the one non-obvious decision on this page.
+
+     A mirror-bright chrome gradient is the obvious way to draw metal and it
+     is the wrong way to draw metal that has words on it. Polished steel has
+     near-white specular hits, and near-white is unreadable under any text
+     colour, so the type either disappears every time the highlight sweeps
+     under it or you flatten the highlight until the surface stops looking
+     like metal at all. That trade is why most metal effects on the web end
+     up on an empty pill with nothing written on it.
+
+     So the plaque is GUNMETAL, not mirror. Its brightest band is #474f58
+     rather than #ffffff, which is 8.3:1 against white text, so the text is
+     legible everywhere on the surface and never has to dodge the sweep. The
+     visible range runs #14181c to #474f58, which is what the eye actually
+     reads as "a curved metal surface catching light". The illusion survives
+     the accessibility requirement instead of being traded against it.
+
+     One ramp for both themes, and that is deliberate. A metal plate is a
+     physical object with its own colour, not a themed surface, so it should
+     not change colour when the reader's phone goes dark. In dark mode it is
+     separated from the page by a hairline instead.
+     --------------------------------------------------------------------- */
+  --metal: linear-gradient(
+    102deg,
+    #14181c 0%,
+    #2b3138 10%,
+    #474f58 18%,
+    #2a3037 27%,
+    #1a1e23 36%,
+    #3c434b 50%,
+    #22272d 60%,
+    #151a1e 70%,
+    #444c55 82%,
+    #262b31 93%,
+    #191d22 100%
+  );
+  --metal-ink: #f2f4f6;
+  --metal-ink-2: #bcc3cb;
+
+  --shadow: 0 1px 2px rgb(20 20 26 / 0.06), 0 8px 24px rgb(20 20 26 / 0.07);
+
+  --wrap: 68rem;
+  --font: 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #101015;
+    --paper-2: #191920;
+    --paper-3: #22222b;
+
+    --ink: #efeee9;
+    --ink-2: #a5a5af;
+    --ink-3: #8a8a95;
+
+    --rule: #2c2c36;
+    --rule-2: #3b3b47;
+
+    --accent: #7a93ff;
+    --accent-ink: #0b0b12;
+
+    /* Lifted for a dark ground so the stars keep their weight. */
+    --star: #f0b03a;
+
+    --open: #4cc98a;
+    --shut: #f08a63;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 30px rgb(0 0 0 / 0.4);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+address {
+  font-style: normal;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 30;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.7rem 1.1rem;
+  font-weight: 600;
+}
+
+.skip:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+/* Tabler sets stroke attributes on the root svg. Resetting them here means the
+   markup can drop the duplicated width/height and the icons still size from
+   the font, and a single place decides the weight. */
+.i {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =====================================================================
+   HEADER
+   ===================================================================== */
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.top__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex: none;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.brand__name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand__where {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* One line at every width. Below 44rem the links drop rather than wrap,
+   because a two line nav bar is a broken nav bar, not a layout. */
+.nav {
+  display: none;
+  gap: 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.nav a {
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.nav a:hover {
+  color: var(--ink);
+}
+
+@media (min-width: 44rem) {
+  .nav {
+    display: flex;
+  }
+}
+
+/* The skip link is the only thing that needs to clear the sticky bar. */
+.top__row a:focus-visible,
+.top__row button:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.12s ease;
+}
+
+.btn--sm {
+  min-height: 2.5rem;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.85rem;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn--primary:hover {
+  background: color-mix(in srgb, var(--accent) 84%, var(--ink));
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule-2);
+}
+
+.btn--ghost:hover {
+  border-color: var(--ink);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* =====================================================================
+   HERO
+   Text left, plaque right. The two columns are not the same width, which
+   is the whole asymmetry. Below 52rem they stack.
+   ===================================================================== */
+
+.hero {
+  padding: 3rem 0 3.5rem;
+}
+
+.hero__grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.hero__title {
+  /* Big, because a shop name should read from across a road. Not shouting,
+     because weight and the two type sizes below it already do the work and
+     scale alone just makes the page feel amateur. */
+  font-size: clamp(2.9rem, 9.5vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+}
+
+.hero__full {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  letter-spacing: -0.01em;
+}
+
+.hero__sub {
+  margin-top: 1rem;
+  max-width: 34ch;
+  font-size: 1.05rem;
+  color: var(--ink-2);
+}
+
+.hero__acts {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+/* ---------------------------------------------------------------------
+   THE PLAQUE. The one metal surface on the page.
+
+   The sweep is a background-position animation on a linear gradient. It is
+   not a shader and it does not need to be: a flat gradient that slides reads
+   as a reflection at this size, and it costs no canvas, no script and no
+   GPU memory on a phone that may be on mobile data.
+   --------------------------------------------------------------------- */
+
+.plaque {
+  position: relative;
+  padding: 1.5rem 1.5rem 1.4rem;
+  border-radius: 4px;
+  background-image: var(--metal);
+  background-size: 200% 100%;
+  color: var(--metal-ink);
+  /* The bevel is what makes it read as a plate with thickness rather than a
+     rectangle with a gradient in it. Top edge catches light, bottom edge is
+     in its own shadow, and the two hard shadows give it the section. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.17),
+    inset 0 -1px 0 rgb(0 0 0 / 0.55),
+    inset 0 0 0 1px rgb(0 0 0 / 0.4),
+    0 1px 2px rgb(20 20 26 / 0.14),
+    0 18px 40px rgb(20 20 26 / 0.16);
+}
+
+/* The hairline that keeps the plate off the page in dark mode, where the
+   plate and the ground are both near black. In light mode it is invisible
+   against the bone, which is also correct. */
+@media (prefers-color-scheme: dark) {
+  .plaque {
+    outline: 1px solid var(--rule);
+    outline-offset: -1px;
+  }
+}
+
+@keyframes sweep {
+  from {
+    background-position: 200% 50%;
+  }
+  to {
+    background-position: -60% 50%;
+  }
+}
+
+.plaque__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--metal-ink-2);
+}
+
+.plaque__hours {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-family: var(--mono);
+  font-size: clamp(1.5rem, 3.8vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  /* The hours must never break across two lines. A shop board that reads
+     "9 AM to" on one line and "9 PM" on the next is worse than no board. */
+  white-space: nowrap;
+}
+
+.plaque__hours span {
+  font-family: var(--font);
+  font-size: 0.44em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--metal-ink-2);
+}
+
+.plaque__days {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--metal-ink-2);
+}
+
+.plaque__rule {
+  margin: 1rem 0 0.85rem;
+  border: 0;
+  border-top: 1px solid rgb(255 255 255 / 0.16);
+}
+
+.plaque__state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--metal-ink);
+}
+
+.plaque__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: none;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* These two are not the page's --open and --shut. On the plate they have to be
+   light enough to clear 4.5:1 against the metal's brightest band, #474f58,
+   which the paper-grounded values do not. Checked by hand: #56dd97 is 4.72:1
+   and #ffb08a is 4.61:1, where #ffa07a was only 4.2:1 and missed. */
+.plaque__state.is-open {
+  color: #56dd97;
+}
+
+.plaque__state.is-shut {
+  color: #ffb08a;
+}
+
+.plaque__next {
+  margin-top: 0.15rem;
+  font-size: 0.85rem;
+  color: var(--metal-ink-2);
+}
+
+/* A live indicator that stays still still reads as live, because the words
+   next to it are the actual signal. The pulse is confirmation, not meaning. */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.plaque__state.is-open .plaque__dot {
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plaque {
+    animation: sweep 7s linear infinite;
+  }
+}
+
+/* =====================================================================
+   SECTIONS
+   ===================================================================== */
+
+.section {
+  padding: 3.5rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.section__title {
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
+  margin-bottom: 1.75rem;
+}
+
+/* ---------------------------------------------------------------------
+   STOCK. Five cells in a six column grid so the split is 3+3 then 2+2+2.
+   Equal thirds three times over is the shape of every generated page.
+
+   Background variety is doing the work here: two cells invert, one is
+   filled with the accent. Without that a five cell grid is five white
+   rectangles with text in them.
+   --------------------------------------------------------------------- */
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.cell {
+  position: relative;
+  padding: 1.35rem 1.3rem 1.45rem;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.i--cell {
+  /* 1.6rem, not smaller. These are 24px grid paths and at 20px the denser
+     ones, the cookie in particular, turn into a blob. */
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-bottom: 0.6rem;
+  color: var(--accent);
+}
+
+.cell__name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cell__desc {
+  font-size: 0.88rem;
+  color: var(--ink-3);
+}
+
+.cell--ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.cell--ink .i--cell {
+  color: var(--paper);
+  opacity: 0.75;
+}
+
+.cell--ink .cell__desc {
+  color: color-mix(in srgb, var(--paper) 62%, transparent);
+}
+
+.cell--accent {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.cell--accent .i--cell,
+.cell--accent .cell__desc {
+  color: color-mix(in srgb, var(--accent-ink) 78%, transparent);
+}
+
+/* =====================================================================
+   TRUST
+
+   Reasons on one side, the review block on the other. Two columns because the
+   two halves answer different questions: one is "why this shop", the other is
+   "what do other people say". They should not be stacked into one column,
+   because a reader looking for reassurance about a shop is looking for other
+   people, and burying that under a list of our own claims defeats it.
+   ===================================================================== */
+
+.trust {
+  display: grid;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.trust__col .section__title {
+  margin-bottom: 1.5rem;
+}
+
+.reasons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.15rem;
+}
+
+.reasons li {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--rule);
+}
+
+.reasons strong {
+  display: block;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* The honest empty state, given the same weight as a reviews wall would have
+   had. A grey box here would read as "something failed to load". */
+.reviews {
+  padding: 1.5rem;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+}
+
+.reviews__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.85rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.rating__score {
+  font-family: var(--mono);
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.rating__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+/* Outline stars with a filled copy clipped on top at the score, so 4.6 shows
+   four whole stars and most of a fifth rather than being rounded up to five.
+   Rounding a rating up is the small dishonest version of this block. */
+.rating__stars {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.rating__track,
+.rating__fill {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.rating__fill {
+  position: absolute;
+  inset: 0;
+  width: var(--pct);
+  overflow: hidden;
+}
+
+.s {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: none;
+  fill: none;
+  stroke: var(--rule-2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.s--on {
+  fill: var(--star);
+  stroke: var(--star);
+}
+
+.rating__outof {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rating__count {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+.rating__count a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.rating__asof {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.reviews__body {
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+@media (min-width: 52rem) {
+  .trust {
+    grid-template-columns: 1.25fr 1fr;
+    gap: 3rem;
+  }
+}
+
+/* =====================================================================
+   THE STORY
+
+   Stacked heading over body rather than a left headline with a paragraph
+   floating beside it. The message is one thing, so it gets one column and a
+   measure a person can actually read.
+   ===================================================================== */
+
+.story {
+  max-width: 62ch;
+}
+
+.story p {
+  color: var(--ink-2);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.story p + p {
+  margin-top: 1rem;
+}
+
+.story__since {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.9rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.story__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.story__year {
+  font-family: var(--mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+/* =====================================================================
+   THE SHOP
+
+   Two portrait photographs, 3:4, in a plain pair with a gap. Deliberately
+   not the hairline grid the stock list uses: same page, two different
+   treatments, so the eye reads them as two things rather than one repeated
+   component.
+   ===================================================================== */
+
+.shots {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.shot {
+  margin: 0;
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Both sources are already 3:4 and the boxes are 3:4, so in practice this
+     never crops. It is here so a differently shaped upload from the owner
+     fills its box instead of breaking the grid. */
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: var(--paper-2);
+}
+
+.shot figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--ink-3);
+}
+
+@media (min-width: 44rem) {
+  .shots {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+  }
+}
+
+/* =====================================================================
+   VISIT
+   ===================================================================== */
+
+.visit {
+  display: grid;
+  gap: 2.25rem;
+}
+
+.visit__pay {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+
+.visit__pay .i {
+  color: var(--ink-3);
+}
+
+.addr {
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.linkrows {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.linkrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.linkrow:hover {
+  color: color-mix(in srgb, var(--accent) 80%, var(--ink));
+}
+
+/* A small printed notice on the shop's own glass door, so it is set as a
+   notice rather than as a feature. */
+.shoes {
+  margin-top: 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--rule-2);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 40ch;
+}
+
+.visit__note {
+  margin-top: 1.5rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+  max-width: 38ch;
+}
+
+/* ---------------------------------------------------------------------
+   MAP
+
+   The iframe the shop owner supplied, wired up on click.
+
+   It is not loaded on page load on purpose. A Google Maps embed is an iframe
+   plus its own scripts and cookies, and a few hundred kilobytes is a real
+   cost to somebody opening this page on mobile data while standing outside
+   the shop. The button below says the same thing in plain words so nobody
+   has to guess why the map is not already there.
+   --------------------------------------------------------------------- */
+
+.map {
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  min-height: 17rem;
+}
+
+.map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 17rem;
+  border: 0;
+}
+
+.map__hold {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  text-align: center;
+  min-height: 17rem;
+  padding: 2rem 1.5rem;
+}
+
+.i--map {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--accent);
+}
+
+.map__coord {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--ink-2);
+}
+
+/* =====================================================================
+   FOOT
+   ===================================================================== */
+
+.foot {
+  padding: 2.25rem 0 2.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.foot__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1.5rem;
+}
+
+.foot__name {
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* The former name sits in the footer as well as the story section. Regulars
+   who still search the old name should find it here too. */
+.foot__was {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.foot__tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  /* Not the mono face the plaque uses. A monospace space is a full character
+     wide, so "98495 30828" renders with a hole in the middle of it that
+     reads as a typo in a phone number. Tabular figures give the alignment
+     without the gap. */
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.foot__tel:hover {
+  color: var(--accent);
+}
+
+.foot__hours {
+  font-size: 0.88rem;
+  color: var(--ink-3);
+}
+
+/* =====================================================================
+   NO JAVASCRIPT
+   The hours and the open/closed line are the only things JavaScript adds.
+   The plaque has honest text in the markup already, so a page with no script
+   at all is still correct, just frozen at whatever the clock said when it
+   was written. The address goes in a block below the footer.
+   ===================================================================== */
+
+.ns {
+  padding-block: 1.5rem 2.5rem;
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+
+.ns p + p {
+  margin-top: 0.3rem;
+}
+
+/* =====================================================================
+   WIDTHS
+
+   Everything asymmetric above md collapses to one column. A seven column
+   split that survives to 320px is a bug, not a layout.
+   ===================================================================== */
+
+@media (min-width: 44rem) {
+  .grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .cell {
+    grid-column: span 3;
+  }
+
+  .cell:nth-child(n + 3) {
+    grid-column: span 2;
+  }
+
+  .visit {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* The two column hero needs a wider gate than 52rem. At 832px the plaque's
+   inner box came out at 252px and the hours needed 252px, so the hours were
+   exactly filling their container with nothing to spare. nowrap plus a zero
+   pixel margin is one font difference away from clipping. 56rem leaves the
+   hours about 60px of room. */
+@media (min-width: 56rem) {
+  .hero {
+    padding: 3.75rem 0 4rem;
+  }
+
+  .hero__grid {
+    grid-template-columns: 1.3fr 1fr;
+    gap: 3rem;
+  }
+
+  .visit {
+    grid-template-columns: 1fr 1.15fr;
+    gap: 3.5rem;
+  }
+
+  .plaque {
+    padding: 1.8rem 1.6rem 1.6rem;
+  }
+}
+
+/* =====================================================================
+   REDUCED MOTION
+
+   The sweep and the pulse are the only two things that move on their own.
+   Both stop. The plaque keeps a static highlight at 50% so it still reads as
+   metal rather than collapsing into a flat grey block.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .plaque {
+    animation: none;
+    background-position: 50% 50%;
+  }
+
+  .plaque__state.is-open .plaque__dot {
+    animation: none;
+  }
+
+  .btn,
+  .linkrow,
+  .foot__tel {
+    transition: none;
+  }
+}

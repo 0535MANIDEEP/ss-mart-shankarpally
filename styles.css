@@ -906,6 +906,15 @@ address {
   gap: 2.25rem;
 }
 
+/* The area is spelled several ways in real use, so the page says which. */
+.spelling {
+  margin-top: 1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+  max-width: 42ch;
+}
+
 .visit__pay {
   display: flex;
   align-items: center;

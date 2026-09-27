@@ -2,7 +2,9 @@ User-agent: *
 Allow: /
 
 # Nothing here is private and nothing is worth hiding from a crawler. The map
-# is an iframe that only loads on click, so there is no crawlable map URL to
-# block, and there is no admin area, no login and no user data on this site.
+# is an iframe that only fetches when scrolled to, there is no admin area, no
+# login and no user data on this site.
 
-Sitemap: /sitemap.xml
+# This has to be an absolute URL. A relative path here is silently ignored by
+# Google, so the sitemap gets discovered by luck rather than by being declared.
+Sitemap: https://0535manideep.github.io/ss-mart-shankarpally/sitemap.xml

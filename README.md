@@ -237,7 +237,7 @@ URLs, and the `<loc>` and `<lastmod>` in `sitemap.xml`.
 | Map embed | the URL in `app.js` | supplied by the shop owner |
 | Address | Shankerpally Vegetable Market, BNR Road, Shankarpally, Hyderabad, Telangana 501203 | Cybo directory |
 | Phone | 98495 30828 | the shop's own signboard, and Cybo |
-| Hours | 9 AM to 9 PM daily | the shop's own Instagram bio, confirmed by the shop |
+| Hours | 9 AM to 9:30 PM daily | the shop's own Instagram bio, confirmed by the shop |
 | Payment | cash, credit card, NFC tap | Cybo directory |
 | Photographs | shopfront and interior | the shop's own Maps listing, used with the owner's approval |
 | Instagram | `@ssmartshankarpally_official` | confirmed by the shop; see the note below |
@@ -270,7 +270,7 @@ Four things started as single-sourced or unverified and are now corroborated:
   wrong one.
 - **4.6 from 21 reviews.** From the `/maps/preview/place` payload Google serves
   for the listing, not from a rendered panel and not from a directory.
-- **Opening hours, 9 AM to 9 PM.** The shop's own Instagram bio says so, and the
+- **Opening hours, 9 AM to 9:30 PM.** The shop's own Instagram bio says so, and the
   shop has confirmed it. Cybo's 8:30 to 9:30 is the outlier and is supported by
   nothing else. Note that the timings are **not** printed anywhere on the
   signboard, so unlike the phone number they cannot be read off the photograph.

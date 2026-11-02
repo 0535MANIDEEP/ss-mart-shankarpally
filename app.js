@@ -14,7 +14,7 @@
    OPEN OR CLOSED
 
    Somebody opening a shop page is usually standing outside it wondering
-   whether to walk in. "9 AM to 9 PM" does not answer that, this does.
+   whether to walk in. "9 AM to 9:30 PM" does not answer that, this does.
 
    The hour is read in Asia/Kolkata, not from the visitor's own clock. The
    shop opens when a clock on a wall in Shankarpally says it does, so anyone
@@ -29,7 +29,7 @@
 
 const SHOP_TZ = 'Asia/Kolkata';
 const OPENS = 9;
-const CLOSES = 21;
+const CLOSES = 21.5; // 9:30 PM
 
 function shopHour() {
   let parts;
@@ -53,8 +53,11 @@ function shopHour() {
 }
 
 function label(hour24) {
-  const h = hour24 % 12 === 0 ? 12 : hour24 % 12;
-  return `${h} ${hour24 < 12 ? 'AM' : 'PM'}`;
+  const h24 = Math.floor(hour24);
+  const m = Math.round((hour24 - h24) * 60);
+  const h = h24 % 12 === 0 ? 12 : h24 % 12;
+  const ampm = h24 < 12 ? 'AM' : 'PM';
+  return m ? `${h}:${String(m).padStart(2, '0')} ${ampm}` : `${h} ${ampm}`;
 }
 
 function setStatus() {
@@ -67,7 +70,7 @@ function setStatus() {
   if (now === null) {
     state.className = 'plaque__state';
     text.textContent = 'Hours not available on this device';
-    next.textContent = 'Open 9 AM to 9 PM every day';
+    next.textContent = 'Open 9 AM to 9:30 PM every day';
     return;
   }
 

@@ -1,14 +1,20 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  One page, so one URL. The lastmod is the date of this deploy. If the repo is
-  ever renamed or moved off this account, the loc and the canonical link in
-  index.html have to change together.
+  Two pages: the shop and the catalogue. The lastmod is the date of this
+  deploy. If the repo is ever renamed or moved off this account, the loc and
+  the canonical links have to change together.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://0535manideep.github.io/ss-mart-shankarpally/</loc>
-    <lastmod>2026-09-28</lastmod>
+    <lastmod>2026-11-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://0535manideep.github.io/ss-mart-shankarpally/catalogue.html</loc>
+    <lastmod>2026-11-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>

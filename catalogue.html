@@ -338,6 +338,18 @@
   font-size: 0.68rem;
   font-weight: 500;
   color: var(--ink-3);
+  text-decoration: line-through;
+}
+
+/* Discount highlight: the struck MRP plus an explicit saving amount, so the
+   discount area reads as a deliberate discount and not just a smaller number. */
+.item__save {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-top: 0.15rem;
 }
 
 .item__act {
@@ -679,6 +691,8 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-block: 0.5rem;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 0.75rem;
 }
 
 .cattabs__row::-webkit-scrollbar {
@@ -900,6 +914,23 @@
   var orderClose = document.getElementById('orderClose');
   var catTabs = document.getElementById('catTabs');
   var catTabsRow = catTabs ? catTabs.querySelector('.cattabs__row') : null;
+
+  /* The category scroller is a real scroll container, so it needs a focus
+     order of its own: without a tabindex the arrow keys have nowhere to go
+     and the row is scrollable by touch and mouse wheel but not by keyboard. */
+  if (catTabs) {
+    catTabs.setAttribute('tabindex', '0');
+    catTabs.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Home' && e.key !== 'End') return;
+      var el = catTabs.querySelector('.cattabs__row');
+      if (!el) return;
+      e.preventDefault();
+      var step = e.key === 'ArrowRight' ? el.clientWidth * 0.8 : -el.clientWidth * 0.8;
+      if (e.key === 'Home') step = -el.scrollLeft;
+      if (e.key === 'End') step = el.scrollWidth - el.clientWidth;
+      el.scrollBy({ left: step, behavior: 'smooth' });
+    });
+  }
 
   /* --------------------------------------------------- category tabs */
 
@@ -1170,6 +1201,7 @@
     var qty = cart[code] || 0;
     var mrp = it[4];
     var img = IMAGES[code];
+    var save = (mrp && mrp > it[3]) ? Math.round((mrp - it[3]) * 100) / 100 : 0;
 
     return (
       '<li class="item' + (img ? ' item--hasimg' : '') + '" data-code="' + esc(code) + '">' +
@@ -1182,7 +1214,10 @@
       '</div>' +
       '<div class="item__price">' +
       '<span class="item__rate">' + money(it[3]) + '</span>' +
-      (mrp ? '<s class="item__mrp">' + money(mrp) + '</s>' : '') +
+      (mrp
+        ? '<s class="item__mrp">' + money(mrp) + '</s>' +
+          (save > 0 ? '<span class="item__save">Save ' + money(save) + '</span>' : '')
+        : '') +
       '</div>' +
       '<div class="item__act">' + actHtml(code, qty, 'add') + '</div>' +
       '</li>'

@@ -637,10 +637,92 @@
   font-size: 0.8rem;
 }
 
-/* -------------------------------------------------------------- footer */
+/* --------------------------------------------------------- category tabs */
 
-.cat-foot {
-  margin-top: 1rem;
+.cattabs {
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.cattabs__row {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-block: 0.5rem;
+}
+
+.cattabs__row::-webkit-scrollbar {
+  display: none;
+}
+
+.cattab {
+  flex: none;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--rule-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.cattab:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.cattab.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* --------------------------------------------------------- store info */
+
+.foot__tel-wrap {
+  margin-top: 0.35rem;
+}
+
+.foot__tel {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.foot__info {
+  text-align: right;
+}
+
+.foot__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.foot__sub {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  max-width: 20rem;
+}
+
+@media (max-width: 32rem) {
+  .foot__row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .foot__info {
+    text-align: left;
+  }
+  .foot__sub {
+    max-width: none;
+  }
 }
 
 .cat-foot .foot__hours {
@@ -696,6 +778,11 @@
           </button>
         </form>
       </div>
+      <nav class="cattabs" id="catTabs" aria-label="Categories">
+        <div class="wrap cattabs__row">
+          <button class="cattab is-active" data-cat="" type="button">All</button>
+        </div>
+      </nav>
     </header>
 
     <main id="main" class="wrap cat-main">
@@ -709,9 +796,13 @@
       <div class="wrap foot__row">
         <div>
           <p class="foot__name">SS MART</p>
-          <p class="foot__hours">BNR Road, Shankarpally · Open Open 9 AM to 9:30 PM every day every day</p>
+          <p class="foot__hours">BNR Road, Shankarpally · Open 9 AM to 9:30 PM every day</p>
+          <p class="foot__tel-wrap"><a class="foot__tel" href="tel:+919849530828">Call 98495 30828</a></p>
         </div>
-        <p><a class="foot__tel" href="tel:+919849530828">98495 30828</a></p>
+        <div class="foot__info">
+          <p class="foot__label">Delivery available</p>
+          <p class="foot__sub">Order on WhatsApp → we pack → you pay → delivery to your door</p>
+        </div>
       </div>
     </footer>
 
@@ -763,15 +854,38 @@
     }
   })();
 
-  var view = document.getElementById('view');
-  var qInput = document.getElementById('q');
-  var clearBtn = document.getElementById('clear');
-  var basket = document.getElementById('basket');
-  var basketCount = document.getElementById('basketCount');
-  var basketTotal = document.getElementById('basketTotal');
-  var dialog = document.getElementById('order');
-  var orderBody = document.getElementById('orderBody');
-  var orderClose = document.getElementById('orderClose');
+  var catTabs = document.getElementById('catTabs');
+  var catTabsRow = catTabs ? catTabs.querySelector('.cattabs__row') : null;
+
+  /* --------------------------------------------------- category tabs */
+
+  function renderCatTabs(activeSlug) {
+    if (!catTabsRow) return;
+    var html = '<button class="cattab' + (activeSlug === '' ? ' is-active' : '') + '" data-cat="" type="button">All</button>';
+    for (var i = 0; i < CATS.length; i++) {
+      html += '<button class="cattab' + (activeSlug === CATS[i][0] ? ' is-active' : '') + '" data-cat="' + CATS[i][0] + '" type="button">' + esc(CATS[i][1]) + '</button>';
+    }
+    catTabsRow.innerHTML = html;
+  }
+
+  function onCatTabClick(e) {
+    var btn = e.target.closest('.cattab');
+    if (!btn) return;
+    var slug = btn.getAttribute('data-cat');
+    if (slug === '') {
+      history.replaceState(null, '', '#/');
+      renderHome();
+    } else {
+      history.replaceState(null, '', '#/c/' + slug);
+      renderCategory(slug);
+    }
+    renderCatTabs(slug);
+    updateBasket();
+  }
+
+  if (catTabsRow) {
+    catTabsRow.addEventListener('click', onCatTabClick);
+  }
 
   var cart = loadCart();
   var shown = 80;
@@ -858,6 +972,7 @@
 
   function renderHome() {
     currentList = [];
+    renderCatTabs('');
     var tiles = '';
     for (var i = 0; i < CATS.length; i++) {
       tiles +=
@@ -892,6 +1007,8 @@
     currentList.sort(byName);
     shown = 80;
 
+    renderCatTabs(slug);
+
     view.innerHTML =
       '<a class="crumb" href="#/">All categories</a>' +
       '<h1 class="cat-h1">' + esc(CATS[idx][1]) + '<small>' + currentList.length + '</small></h1>' +
@@ -904,6 +1021,7 @@
   function renderSearch(q) {
     currentList = searchItems(q);
     shown = 80;
+    renderCatTabs('');
     var label = 'Matches for \u201C' + esc(q) + '\u201D';
 
     view.innerHTML =
